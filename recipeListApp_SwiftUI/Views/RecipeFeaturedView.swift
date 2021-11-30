@@ -45,6 +45,7 @@ struct RecipeFeaturedView: View {
                                         .clipped()
                                     Text(model.recipes[index].name)
                                         .padding(5)
+                                        .foregroundColor(.black)
 
                                 }
                             }
@@ -74,7 +75,12 @@ struct RecipeFeaturedView: View {
 
 struct RecipeFeaturedView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipeFeaturedView()
-            .environmentObject(RecipeModel())
+        Group {
+            RecipeFeaturedView()
+                .environmentObject(RecipeModel())
+            RecipeFeaturedView()
+                .preferredColorScheme(.dark)
+                .environmentObject(RecipeModel())
+        }
     }
 }
