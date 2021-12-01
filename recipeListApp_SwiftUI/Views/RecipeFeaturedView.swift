@@ -13,6 +13,8 @@ struct RecipeFeaturedView: View {
     
     @EnvironmentObject var model:RecipeModel
     @State var isDetailViewShowing = false
+    @State var tabSelectionIndex = 0
+    
     
     var body: some View {
         // Wrap tab view in Geometry Reader
@@ -27,7 +29,7 @@ struct RecipeFeaturedView: View {
                     
                 
                 // Can also be used for swipeable views
-                TabView {
+                TabView (selection: $tabSelectionIndex){
                     
                     // Loop through each recipe
                     ForEach(0..<model.recipes.count) { index in
@@ -55,6 +57,7 @@ struct RecipeFeaturedView: View {
 
                                     }
                                 }
+                                .tag(index)
                                 .sheet(isPresented: $isDetailViewShowing , content: {
                                     // Show RecipeDetailView
                                     RecipeDetailView(recipe: model.recipes[index])
@@ -77,14 +80,25 @@ struct RecipeFeaturedView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Preparation Time:")
                     .font(.headline)
-                Text("1 hour")
+                Text(model.recipes[tabSelectionIndex].prepTime)
                 Text("Highlights")
                     .font(.headline)
-                Text("Healthy, Hearty")
+                RecipeHighlights(highlights: model.recipes[tabSelectionIndex].highlights)
             }
             .padding([.leading, .bottom])
         }
+        .onAppear(perform: {setFeaturedIndex()
+        })
     }// End Body
+    
+    // Get first featuredRecipe
+    func setFeaturedIndex() {
+        // Find the index of the first recipe that is featured
+        let index = model.recipes.firstIndex{ (recipe) -> Bool in
+            return recipe.featured
+        }
+        tabSelectionIndex = index ?? 0
+    }
 }// End RecipeFeaturedView()
 
 struct RecipeFeaturedView_Previews: PreviewProvider {
